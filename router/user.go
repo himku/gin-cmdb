@@ -1,10 +1,10 @@
 package router
 
 import (
+	"GoNotes/models"
 	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 /**
@@ -14,19 +14,31 @@ import (
  **/
 
 func loadUserRouter(e *gin.Engine) {
+	// 路由分组
 	userApiGroup := e.Group("/user")
 	{
-		userApiGroup.POST("/login", loginUser)
+		userApiGroup.POST("/add", CreateUser)
 	}
 }
 
-func loginUser(c *gin.Context) {
+func CreateUser(c *gin.Context) {
+	//  获取表单数据
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	msg := fmt.Sprintf("username:%s, password:%s", username, password)
-	fmt.Println(msg)
-	c.JSON(http.StatusOK, gin.H{
-		"code": "200",
-		"msg":  msg,
-	})
+	user := models.Users{Username: username, Password: password}
+	models.CreateUser(&user)
+	models.CreateUser(&user)
+	if models.CreateUser(&user) {
+		msg := fmt.Sprintf("create username %s failed!", username)
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusOK,
+			"msg":    msg,
+		})
+	} else {
+		msg := fmt.Sprintf("create username %s success!", username)
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusOK,
+			"msg":    msg,
+		})
+	}
 }
