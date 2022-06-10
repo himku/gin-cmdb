@@ -2,7 +2,7 @@ package models
 
 import (
 	"GoNotes/middleware"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 /**
@@ -14,27 +14,42 @@ import (
 // Users 用户表结构体数据
 type Users struct {
 	gorm.Model
-	ID       int64  `gorm:"primary_key"` // 主键ID
 	Username string `gorm:"username" json:"username"`
 	Password string `gorm:"password" json:"password"`
 }
 
 var db = middleware.NewConnectMySQL()
-var user Users
+var auth Users
 
 func init() {
 	// 初始化表
-	err := db.AutoMigrate(&user)
+	err := db.AutoMigrate(&Users{})
 	if err != nil {
 		return
 	}
 }
 
 func CreateUser(user *Users) bool {
-
-	if err := db.Debug().Save(&user); err != nil {
+	if CheckUser(user.Username) {
 		return false
 	} else {
+		db.Debug().Create(&user)
 		return true
 	}
+}
+
+func CheckUser(username string) bool {
+	db.Debug().Select("id").Where(Users{Username: username}).First(&auth)
+	if auth.ID > 0 {
+		return true
+	}
+	return false
+}
+
+func CheckAuth(username, password string) bool {
+	db.Debug().Select("id").Where(Users{Username: username, Password: password}).First(&auth)
+	if auth.ID > 0 {
+		return true
+	}
+	return false
 }
