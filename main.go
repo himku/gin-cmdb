@@ -1,9 +1,9 @@
 package main
 
 import (
-	"GoNotes/config"
-	"GoNotes/router"
 	"fmt"
+	"gin-cmdb/config"
+	"gin-cmdb/router"
 )
 
 func main() {

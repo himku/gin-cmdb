@@ -1,7 +1,7 @@
 package models
 
 import (
-	"GoNotes/middleware"
+	"gin-cmdb/middleware"
 	"github.com/jinzhu/gorm"
 )
 

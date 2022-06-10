@@ -1,8 +1,8 @@
 package router
 
 import (
-	"GoNotes/models"
 	"fmt"
+	"gin-cmdb/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

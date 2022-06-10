@@ -1,4 +1,4 @@
-module GoNotes
+module gin-cmdb
 
 go 1.16
 
