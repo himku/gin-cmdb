@@ -57,4 +57,5 @@ func CheckAuth(username, password string) bool {
 	//	}
 	//	return false
 	//}
+	return false
 }
