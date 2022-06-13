@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"gin-cmdb/models"
+	"gin-cmdb/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -23,8 +24,8 @@ func loadUserRouter(e *gin.Engine) {
 }
 
 func LoginUser(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 	if models.CheckAuth(username, password) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusOK,
@@ -43,7 +44,8 @@ func CreateUser(c *gin.Context) {
 	//  获取表单数据
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	user := models.Users{Username: username, Password: password}
+	hashPassword, _ := utils.HashPassword(password)
+	user := models.Users{Username: username, Password: hashPassword}
 	if models.CreateUser(&user) {
 		msg := fmt.Sprintf("用户%s创建成功", username)
 		c.JSON(http.StatusOK, gin.H{

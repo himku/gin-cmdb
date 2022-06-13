@@ -2,6 +2,7 @@ package models
 
 import (
 	"gin-cmdb/middleware"
+	"gin-cmdb/utils"
 	"github.com/jinzhu/gorm"
 )
 
@@ -47,9 +48,13 @@ func CheckUser(username string) bool {
 }
 
 func CheckAuth(username, password string) bool {
-	db.Debug().Select("id").Where(Users{Username: username, Password: password}).First(&auth)
-	if auth.ID > 0 {
+	db.Debug().Select("password").Where(Users{Username: username}).First(&auth)
+	if utils.CheckPasswordHash(password, auth.Password) {
 		return true
 	}
-	return false
+	//	if auth.ID > 0 {
+	//		return true
+	//	}
+	//	return false
+	//}
 }
