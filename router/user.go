@@ -2,10 +2,12 @@ package router
 
 import (
 	"fmt"
+	"gin-cmdb/middleware"
 	"gin-cmdb/models"
 	"gin-cmdb/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 /**
@@ -19,17 +21,44 @@ func loadUserRouter(e *gin.Engine) {
 	userApiGroup := e.Group("/user")
 	{
 		userApiGroup.POST("/login", LoginUser)
+		userApiGroup.Use(middleware.JwtAuth())
+		userApiGroup.POST("/refreshToken", RefreshAuth)
 		userApiGroup.POST("/add", CreateUser)
+		userApiGroup.GET("list", ListUser)
 	}
+}
+
+func RefreshAuth(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	refreshToken := strings.SplitN(authHeader, " ", 2)
+	newToken, _ := utils.RefreshToken(refreshToken[1])
+	c.JSON(http.StatusOK, gin.H{
+		"code": http.StatusOK,
+		"msg":  newToken,
+	})
+}
+
+func ListUser(c *gin.Context) {
+
 }
 
 func LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	if models.CheckAuth(username, password) {
+		user := utils.JwtCustomClaims{Username: username, Password: password}
+		token, err := utils.MakeClamsToken(user)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"code": http.StatusOK,
+				"msg":  err,
+			})
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusOK,
 			"msg":    "登陆成功",
+			"data":   gin.H{"token": token},
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
