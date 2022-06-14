@@ -29,3 +29,4 @@ web/test/unit/coverage/
 web/test/e2e/reports/
 web/selenium-debug.log
 
+.idea
