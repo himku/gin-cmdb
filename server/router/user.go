@@ -24,7 +24,7 @@ func loadUserRouter(e *gin.Engine) {
 		userApiGroup.Use(middleware.JwtAuth())
 		userApiGroup.POST("/refreshToken", RefreshAuth)
 		userApiGroup.POST("/add", CreateUser)
-		userApiGroup.GET("list", ListUser)
+		userApiGroup.GET("/list", ListUser)
 	}
 }
 
@@ -39,7 +39,17 @@ func RefreshAuth(c *gin.Context) {
 }
 
 func ListUser(c *gin.Context) {
-
+	total, userList := models.GetUserList(1, 2)
+	if (total + len(userList)) == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  "未获取到用户数据",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": http.StatusOK,
+		"msg":  userList,
+	})
 }
 
 func LoginUser(c *gin.Context) {
