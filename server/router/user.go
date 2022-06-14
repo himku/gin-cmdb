@@ -5,9 +5,11 @@ import (
 	"gin-cmdb/server/middleware"
 	"gin-cmdb/server/models"
 	"gin-cmdb/server/utils"
+	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+	"time"
 )
 
 /**
@@ -56,7 +58,9 @@ func LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	if models.CheckAuth(username, password) {
-		user := utils.JwtCustomClaims{Username: username, Password: password}
+		user := utils.JwtCustomClaims{Username: username, Password: password, StandardClaims: jwt.StandardClaims{
+			ExpiresAt: jwt.At(time.Now().Add(time.Second * 60)),
+		}}
 		token, err := utils.MakeClamsToken(user)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
