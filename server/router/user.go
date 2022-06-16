@@ -8,6 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -41,7 +42,9 @@ func RefreshAuth(c *gin.Context) {
 }
 
 func ListUser(c *gin.Context) {
-	total, userList := models.GetUserList(1, 2)
+	pageSize, _ := strconv.Atoi(c.PostForm("pageSize"))
+	page, _ := strconv.Atoi(c.PostForm("page"))
+	total, userList := models.GetUserList(page, pageSize)
 	if (total + len(userList)) == 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"code": http.StatusOK,
@@ -59,7 +62,7 @@ func LoginUser(c *gin.Context) {
 	password := c.PostForm("password")
 	if models.CheckAuth(username, password) {
 		user := utils.JwtCustomClaims{Username: username, Password: password, StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(time.Now().Add(time.Second * 60)),
+			ExpiresAt: jwt.At(time.Now().Add(time.Minute * 60)),
 		}}
 		token, err := utils.MakeClamsToken(user)
 		if err != nil {

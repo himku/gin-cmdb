@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"gin-cmdb/server/middleware"
 	"gin-cmdb/server/utils"
 	"github.com/jinzhu/gorm"
@@ -42,7 +41,6 @@ func CreateUser(user *Users) bool {
 
 func CheckUser(username string) bool {
 	checkResult := db.Debug().Select("id").Where(Users{Username: username}).First(&auth)
-	fmt.Println(checkResult.RowsAffected)
 	if checkResult.RowsAffected == 0 {
 		return false
 	}
