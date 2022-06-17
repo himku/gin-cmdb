@@ -18,12 +18,14 @@ import (
 // type Redis config
 
 type Redis struct {
-	Hostname string `yaml:"host"`
-	Port     int    `yaml:"port"`
+	Hostname string `mapstructure:"host" yaml:"host"`
+	Port     int    `mapstructure:"port" yaml:"port"`
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
+	Password string `mapstructure:"password" json:"passowrd" yaml:"passowrd"`
 }
 
 type Server struct {
-	Port         string `yaml:"port"`
+	Port         int    `yaml:"port"`
 	Mode         string `yaml:"mode"`
 	Host         string `yaml:"host"`
 	ReadTimeOut  time.Duration
@@ -37,10 +39,16 @@ type MySQL struct {
 	UserName string `yaml:"userName"`
 }
 
+type Jwt struct {
+	SecretKey    string
+	JwtBlackList int64 `mapstructure:"jwt_black_list" json:"jwt_black_list" yaml:"jwt_black_list"`
+}
+
 type Config struct {
 	Redis
 	MySQL
 	Server
+	Jwt
 }
 
 func NewConfig() *Config {

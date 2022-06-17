@@ -1,4 +1,4 @@
-package router
+package user
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ import (
  * @Date 2022/6/9 14:16
  **/
 
-func loadUserRouter(e *gin.Engine) {
+func LoadUserRouter(e *gin.Engine) {
 	// 路由分组
 	userApiGroup := e.Group("/user")
 	{
@@ -28,6 +28,7 @@ func loadUserRouter(e *gin.Engine) {
 		userApiGroup.POST("/refreshToken", RefreshAuth)
 		userApiGroup.POST("/add", CreateUser)
 		userApiGroup.GET("/list", ListUser)
+		userApiGroup.POST("/logout", LogoutUser)
 	}
 }
 
@@ -105,4 +106,20 @@ func CreateUser(c *gin.Context) {
 			"msg":    msg,
 		})
 	}
+}
+
+func LogoutUser(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	LogOutToken := strings.SplitN(authHeader, " ", 2)
+	err := utils.JoinBlackList(LogOutToken[1])
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  1,
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": http.StatusOK,
+		"msg":  "logOut Success",
+	})
 }

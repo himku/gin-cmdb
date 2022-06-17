@@ -42,6 +42,15 @@ func JwtAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		_, err = utils.ParseClamsToken(headerParts[1])
+		if err != nil || utils.IsInBlacklist(headerParts[1]) {
+			c.JSON(http.StatusOK, gin.H{
+				"code": http.StatusOK,
+				"msg":  "token已注销",
+			})
+			c.Abort()
+			return
+		}
 		c.Set("claims", claims)
 		c.Next() // 交给后面处理
 	}

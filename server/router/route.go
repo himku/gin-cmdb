@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gin-cmdb/server/router/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,9 +13,9 @@ import (
 
 // InitRouter 初始化路由
 func InitRouter() *gin.Engine {
-	r := gin.New()
+	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	loadUserRouter(r)
+	user.LoadUserRouter(r)
 	return r
 }
