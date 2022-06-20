@@ -2,12 +2,8 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-/**
- * @Description
- * @Author sjie
- * @Date 2022/6/17 17:47
- **/
-
+// Host /**
+// 定义主机结构体
 type Host struct {
 	gorm.Model
 	Hostname string `json:"hostname" gorm:"commit:'主机名'"`
@@ -16,6 +12,9 @@ type Host struct {
 	Status   bool   `json:"status" gorm:"commit:'主机状态'"`
 }
 
+var host Host
+
+// GetHostList 获取主机列表
 func GetHostList(page int, pageSize int) (int, []interface{}) {
 	hosts := make([]Host, 10)
 	total := len(hosts)
@@ -37,4 +36,39 @@ func GetHostList(page int, pageSize int) (int, []interface{}) {
 		hostList = append(hostList, hostMap)
 	}
 	return total, hostList
+}
+
+// CreateHost 创建主机
+func CreateHost(host *Host) bool {
+	if CheckHost(host.Hostname) {
+		return false
+	}
+	db.Debug().Create(&host)
+	return true
+}
+
+// CheckHost 检查主机是否已经存在
+func CheckHost(hostname string) bool {
+	checkHostRow := db.Debug().Select("id").Where(Host{Hostname: hostname}).First(&host)
+	if checkHostRow.RowsAffected == 0 {
+		return false
+	}
+	return true
+}
+
+func DeleteHost(hostname string) bool {
+	deleteHost := Host{Hostname: hostname}
+	if CheckHost(hostname) {
+		db.Debug().Unscoped().Where("hostname = ?", hostname).Delete(&deleteHost)
+		return true
+	}
+	return false
+}
+
+func EditHost(h *Host) bool {
+	if CheckHost(h.Hostname) {
+		db.Debug().Model(&auth).Updates(&h)
+		return true
+	}
+	return false
 }

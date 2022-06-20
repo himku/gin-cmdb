@@ -29,6 +29,41 @@ func LoadUserRouter(e *gin.Engine) {
 		userApiGroup.POST("/add", CreateUser)
 		userApiGroup.GET("/list", ListUser)
 		userApiGroup.POST("/logout", LogoutUser)
+		userApiGroup.DELETE("/delete", DeleteUser)
+		userApiGroup.POST("/edit", ModifyUser)
+	}
+}
+
+func ModifyUser(c *gin.Context) {
+	userName := c.PostForm("username")
+	password := c.PostForm("password")
+	hashPassword, _ := utils.HashPassword(password)
+	modifyUser := models.Users{Username: userName, Password: hashPassword}
+	if models.EditUser(&modifyUser) {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  fmt.Sprintf("修改用户%s成功", modifyUser.Username),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  fmt.Sprintf("修改用户%s失败", modifyUser.Username),
+		})
+	}
+}
+
+func DeleteUser(c *gin.Context) {
+	username := c.Query("username")
+	if models.DeleteUser(username) {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  fmt.Sprintf("用户%s删除成功", username),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  fmt.Sprintf("用户%s删除失败", username),
+		})
 	}
 }
 

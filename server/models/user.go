@@ -42,11 +42,6 @@ func CheckAuth(username, password string) bool {
 	if utils.CheckPasswordHash(password, auth.Password) {
 		return true
 	}
-	//	if auth.ID > 0 {
-	//		return true
-	//	}
-	//	return false
-	//}
 	return false
 }
 
@@ -69,4 +64,21 @@ func GetUserList(page int, pageSize int) (int, []interface{}) {
 		userList = append(userList, userMap)
 	}
 	return total, userList
+}
+
+func DeleteUser(username string) bool {
+	deleteUser := Users{Username: username}
+	if CheckUser(username) {
+		db.Debug().Unscoped().Where("username = ?", username).Delete(&deleteUser)
+		return true
+	}
+	return false
+}
+
+func EditUser(u *Users) bool {
+	if CheckUser(u.Username) {
+		db.Debug().Model(&auth).Updates(&u)
+		return true
+	}
+	return false
 }
