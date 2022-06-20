@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gin-cmdb/server/router/api"
 	"gin-cmdb/server/router/user"
 	"github.com/gin-gonic/gin"
 )
@@ -17,5 +18,6 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	user.LoadUserRouter(r)
+	api.LoadHostRouter(r)
 	return r
 }

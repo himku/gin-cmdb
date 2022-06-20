@@ -1,7 +1,6 @@
 package models
 
 import (
-	"gin-cmdb/server/middleware"
 	"gin-cmdb/server/utils"
 	"github.com/jinzhu/gorm"
 )
@@ -19,16 +18,7 @@ type Users struct {
 	Password string `gorm:"password" json:"password"`
 }
 
-var db = middleware.NewConnectMySQL()
 var auth Users
-
-func init() {
-	// 初始化表
-	err := db.AutoMigrate(&Users{})
-	if err != nil {
-		return
-	}
-}
 
 func CreateUser(user *Users) bool {
 	if CheckUser(user.Username) {

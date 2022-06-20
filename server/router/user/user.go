@@ -51,13 +51,13 @@ func ListUser(c *gin.Context) {
 			"code": http.StatusOK,
 			"msg":  "未获取到用户数据",
 		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  userList,
+		})
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
-		"msg":  userList,
-	})
 }
-
 func LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
