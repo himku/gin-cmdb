@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"errors"
-	"fmt"
 	"gin-cmdb/server/config"
 	"github.com/dgrijalva/jwt-go/v4"
 	"strconv"
@@ -73,7 +72,6 @@ func JoinBlackList(token string) (err error) {
 	timer := time.Duration(ExpireTime.ExpiresAt.Unix()-nowUnix) * time.Second
 	// 将 token 剩余时间设置为缓存有效期，并将当前时间作为缓存 value 值
 	err = InitializeRedis().SetNX(context.Background(), GetBlackListKey(token), nowUnix, timer).Err()
-	fmt.Println(err)
 	return
 }
 
